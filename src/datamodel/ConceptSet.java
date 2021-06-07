@@ -981,17 +981,17 @@ public class ConceptSet {
         ConceptSet tempSet = new ConceptSet(tempTrainRatingMatrix);
         tempSet.generateDeConceptSet(2, 8);
 //		tempSet.showInformation();
-        // long startTime = System.currentTimeMillis();
+//      long startTime = System.currentTimeMillis();
 //		for (int i = 0; i < tempSet.numUsers; i++) {
 //			System.out.println("for user " + i + " ");
 //			tempSet.GCGAv6(i, 2, 1);
 //		} // of for i
         int[][] tempRecommendations = tempSet.recommendation(0.5);
         tempSet.validateRecommendation(tempTestRatingMatrix.formalContext, tempRecommendations);
-        // long endTime = System.currentTimeMillis();
-//		 tempSet.validateRecommendation(tempTestRatingMatrix.formalContext, recommendations);
+//      long endTime = System.currentTimeMillis();
+//		tempSet.validateRecommendation(tempTestRatingMatrix.formalContext, recommendations);
 //		tempSet.validateRecommendationOfGCGAv6(tempTestRatingMatrix.formalContext, recordUsers, recommendations);
-        // System.out.println("Time: " + (endTime - startTime) + "ms");
+//      System.out.println("Time: " + (endTime - startTime) + "ms");
     }// Of trainAndTest
 
     /**
@@ -1089,19 +1089,14 @@ public class ConceptSet {
         RatingMatrix tempTestRatingMatrix = new RatingMatrix(6040, 3952, tempTestFormalContextURL);
 
         ConceptSet tempSet = new ConceptSet(tempTrainRatingMatrix);
-//		tempSet.sampling();
-//		tempSet.dividTrainAndTest();
         tempSet.computeSparsity();
 
         long startTime1 = System.currentTimeMillis();
         tempSet.generateDeConceptSet(2, 2);
-//		int[][] tempRecommendations = tempSet.recommendation(0.5);
-//		tempSet.validateRecommendation(tempTestRatingMatrix.formalContext, tempRecommendations);
 //		System.out.println("for old concepts");
-//		int[][] tempRecommendation;
-//		tempRecommendation = tempSet.recommendation(0.5);
-//		tempSet.validateRecommendation(tempTestRatingMatrix.formalContext, tempRecommendation);
-//		long endTime1 = System.currentTimeMillis();
+		int[][] tempRecommendation = tempSet.recommendation(0.5);
+		tempSet.validateRecommendation(tempTestRatingMatrix.formalContext, tempRecommendation);
+		long endTime1 = System.currentTimeMillis();
 //		System.out.println("Time: " + (endTime1 - startTime1) + "ms");
 //		
         long startTime2 = System.currentTimeMillis();
@@ -1166,7 +1161,7 @@ public class ConceptSet {
 //		trainAndTest1();
 //		trainAndTest2();
 //		trainAndTest3();
-//		trainAndTest4();
-        trainAndTest5();
+		trainAndTest4();
+//        trainAndTest5();
     }// Of main
 }// Of ConceptSet
