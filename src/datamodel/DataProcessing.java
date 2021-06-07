@@ -20,12 +20,15 @@ public class DataProcessing {
 	int[][] ratingMatrixInt = new int[24983][100];
 	int[][] testingFormalContext;
 	int[][] trainingFormalContext;
-	
-	/******************************************
+
+	/**
 	 * Read the formal context from file.
-	 ****************************************** 
+	 * @param paraFormalContextURL
+	 * @param paraUsers
+	 * @param paraItems
+	 * @return
 	 */
-	public int[][] readFCFromArrayFile(String paraFormalContextURL, int paraUsers, int paraItems) {
+	public int[][] readFCFromFile(String paraFormalContextURL, int paraUsers, int paraItems) {
 		try {
 			FileReader fr = new FileReader(paraFormalContextURL);
 			BufferedReader br = new BufferedReader(fr);
@@ -37,7 +40,6 @@ public class DataProcessing {
 				if (str1 == null) {
 					break;
 				} // Of if
-//				System.out.println("�� " + tempI +"��");
 				tempFormalContext[tempI] = obtainFCRowArray(str1,paraItems) ;
 				tempI++;
 			} // Of while
@@ -49,52 +51,12 @@ public class DataProcessing {
 			e.printStackTrace();
 		} // Of try
 		return null;
-	}// Of function readCLFromFile
-	
-	/******************************************
-	 * obtain formal context from file row by row.
-	 * @param paraRow
-	 * @param paraColumn
-	 * @return
-	 ******************************************
-	 */
-	
-	int[] obtainFCRowArray(String paraRow,int paraColumn){
-		int[] tempRow = new int [paraColumn];
-//		System.out.println("paraRow.lengh :" + paraRow.length());
-		String tempSubString = paraRow.substring(1,paraRow.length() - 1);
-		String[] tempAllElement = tempSubString.split(", ");
-		for (int i = 0; i < tempAllElement.length; i++) {
-			int tempElement = Integer.parseInt(tempAllElement[i]);
-			tempRow[i] = tempElement;
-		} // Of for i	
-		return tempRow;
-	}// Of function obtainFCRow
-	
-	/******************************************
-	 * obtain formal context from file row by row.
-	 * @param paraRow
-	 * @param paraColumn
-	 * @return
-	 ******************************************
-	 */
-	
-	int[] obtainFCRowArff(String paraRow,int paraColumn){
-		int[] tempRow = new int [paraColumn];
-//		System.out.println("paraRow.lengh :" + paraRow.length());
-		String tempSubString = paraRow.substring(1,paraRow.length() - 1);
-		String[] tempAllElement = tempSubString.split(", ");
-		for (int i = 0; i < tempAllElement.length; i++) {
-			int tempElement = Integer.parseInt(tempAllElement[i]);
-			tempRow[i] = tempElement;
-		} // Of for i	
-		return tempRow;
-	}// Of function obtainFCRow
+	}// Of readCLFromFile
 
-	
-	/******************************************
+	/**
 	 * Read the formal context from file.
-	 ****************************************** 
+	 * @param paraFormalContextURL
+	 * @return
 	 */
 	public int[][] readFCFromFile(String paraFormalContextURL) {
 		try {
@@ -106,7 +68,7 @@ public class DataProcessing {
 			int column = Integer.parseInt(str1);
 			int tempI = 0;
 			int[][] tempFormalContext = new int[row][];
-			while (str1 != null) {	
+			while (str1 != null) {
 				str1 = br.readLine();
 				if (str1 == null) {
 					break;
@@ -123,15 +85,30 @@ public class DataProcessing {
 		} // Of try
 		return null;
 	}// Of function readCLFromFile
-	
+
 	/**
-	 * read txt file like arff file.
-	 *
-	 * @param 
+	 * Obtain formal context from file row by row.
+	 * @param paraRow
+	 * @param paraColumn
 	 * @return
-	 *
 	 */
-	public double[][] readFile(String paraFileURL) {
+	int[] obtainFCRowArray(String paraRow,int paraColumn){
+		int[] tempRow = new int [paraColumn];
+		String tempSubString = paraRow.substring(1,paraRow.length() - 1);
+		String[] tempAllElement = tempSubString.split(", ");
+		for (int i = 0; i < tempAllElement.length; i++) {
+			int tempElement = Integer.parseInt(tempAllElement[i]);
+			tempRow[i] = tempElement;
+		} // Of for i	
+		return tempRow;
+	}// Of obtainFCRowArray
+
+	/**
+	 * Read txt file like arff file.
+	 * @param paraFileURL
+	 * @return
+	 */
+	public double[][] readFileDouble(String paraFileURL) {
 		File f1 = new File(paraFileURL);
 		String[][] rows = new String[25714][3];
 		double[][] tempDis = new double[25714][3];
@@ -140,18 +117,14 @@ public class DataProcessing {
 		try {
 			br = new BufferedReader(new FileReader(f1));
 			String str = null;
-			// ���ж�ȡ
 			while ((str = br.readLine()) != null) {
 				String str1 = str.substring(1, str.length() - 1);
 				rows[index] = str1.split(", ");
-//				rows[index] = str.split("( )+");
 				for (int j = 0; j < 3; j++) {
 					tempDis[index][j] = Double.parseDouble(rows[index][j]);
 				}
-				// index�������,���ж�ȡ��ת����int��
 				index++;
 			}
-			// �ر���
 			br.close();
 		} catch (FileNotFoundException ex) {
 			ex.printStackTrace();
@@ -173,28 +146,67 @@ public class DataProcessing {
 		}
 		return null;
 	}//of readFile
-	
+
 	/**
-	 * read data from excel file.
-	 *
-	 * @param 
+	 * Read txt file like arff file.
+	 * @param paraFileURL
 	 * @return
-	 *
+	 */
+	public int[][] readFileInt(String paraFileURL) {
+		File f1 = new File(paraFileURL);
+		String[][] rows = new String[25714][3];
+		int[][] tempDis = new int[25714][3];
+		int index = 0;
+		BufferedReader br = null;
+		try {
+			br = new BufferedReader(new FileReader(f1));
+			String str = null;
+			while ((str = br.readLine()) != null) {
+				String str1 = str.substring(1, str.length() - 1);
+				rows[index] = str1.split(", ");
+				for (int j = 0; j < 3; j++) {
+					tempDis[index][j] = Integer.parseInt(rows[index][j]);
+				}
+				index++;
+			}
+			br.close();
+		} catch (FileNotFoundException ex) {
+			ex.printStackTrace();
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+		double[][] tempMatrix = new double[index][3];
+		for (int i = 0; i < tempMatrix.length; i++) {
+			for (int j = 0; j < tempMatrix[0].length; j++) {
+				tempMatrix[i][j] = tempDis[i][j];
+			}
+		}
+		int[][] a = new int[300][100];
+		for (int i = 0; i < tempMatrix.length; i++) {
+			a[(int)tempMatrix[i][0]][(int)tempMatrix[i][1]] = (int)tempMatrix[i][2];
+		}
+		for (int i = 0; i < a.length; i++) {
+			System.out.println(Arrays.toString(a[i]));
+		}
+		return null;
+	}//of readFile
+
+	/**
+	 * Read data from excel file.
+	 * @return
 	 */
 	public String[][] readDataFromExcel() {
 		// TODO Auto-generated method stub
     	//read file
         try {
-            File file = new File("src/data/jester-data-1.xls"); // �����ļ�����
-            Workbook wb = Workbook.getWorkbook(file); // ���ļ����л�ȡExcel����������WorkBook��
-            Sheet sheet = wb.getSheet(0); // �ӹ�������ȡ��ҳ��Sheet�� 
-            for (int i = 0; i < sheet.getRows(); i++) { // ѭ����ӡExcel���е����� 
+            File file = new File("src/data/jester-data-1.xls");
+            Workbook wb = Workbook.getWorkbook(file);
+            Sheet sheet = wb.getSheet(0);
+            for (int i = 0; i < sheet.getRows(); i++) {
                 for (int j = 1; j < sheet.getColumns(); j++) { 
                     Cell cell = sheet.getCell(j-1, i); 
                     tempRatingMatrix[i][j-1] = cell.getContents();
-//                    System.out.printf(cell.getContents()+" ");
                 } //of for j
-//                System.out.println(); 
             } //of for i
         } catch (Exception e) {
             e.printStackTrace();
@@ -203,11 +215,9 @@ public class DataProcessing {
 	}//of readDataFromExcel
 	
 	/**
-	 * read file like arff file.
-	 *
+	 * Read file for jester.
 	 * @param 
 	 * @return
-	 *
 	 */
 	public double[][] readFileForJester(String paraFileURL) {
 		File f1 = new File(paraFileURL);
@@ -218,26 +228,20 @@ public class DataProcessing {
 		try {
 			br = new BufferedReader(new FileReader(f1));
 			String str = null;
-			// ���ж�ȡ
 			while ((str = br.readLine()) != null) {
 //				char[] ch = str.toCharArray();
 				rows[index] = str.split("   |\t|  | ");
 				for (int j = 0; j < 3; j++) {
 					tempDis[index][j] = Double.parseDouble(rows[index][j]);
 				}
-				// index�������,���ж�ȡ��ת����int��
 				index++;
 			}
-			// �ر���
 			br.close();
 		} catch (FileNotFoundException ex) {
 			ex.printStackTrace();
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
-//		for (int i = 0; i < dis.length; i++) {
-//			System.out.println(Arrays.toString(dis[i]));
-//		}
 		double[][] dis = new double[index][3];
 		for (int i = 0; i < dis.length; i++) {
 			for (int j = 0; j < dis[0].length; j++) {
@@ -250,7 +254,13 @@ public class DataProcessing {
 		}//of for i
 		return fc;
 	}//of readFile
-	
+
+	/**
+	 * Make a sample data set.
+	 * @param paraFileURL
+	 * @param paraSampleNumberOfUser
+	 * @param paraSampleNumberOfItem
+	 */
 	public void sampling (String paraFileURL,int paraSampleNumberOfUser,int paraSampleNumberOfItem) {
 //		int[][] fc = readFile(paraFileURL);
 //		int[][] fc = new int[tempfc.length][tempfc[0].length];
@@ -319,52 +329,13 @@ public class DataProcessing {
 		}//of for i
 		
 	}//of sampling
-	
-	public int[][] read(String paraFileURL) {
-		File f1 = new File(paraFileURL);
-		String[][] rows = new String[2636][3];
-		int[][] tempDis = new int[2636][3];
-		int index = 0;
-		BufferedReader br = null;
-		try {
-			br = new BufferedReader(new FileReader(f1));
-			String str = null;
-			// ���ж�ȡ
-			while ((str = br.readLine()) != null) {
-				String str1 = str.substring(1, str.length() - 1);
-				rows[index] = str1.split(", ");
-				for (int j = 0; j < 3; j++) {
-					tempDis[index][j] = Integer.parseInt(rows[index][j]);
-				}
-				// index�������,���ж�ȡ��ת����int��
-				index++;
-			}
-			// �ر���
-			br.close();
-		} catch (FileNotFoundException ex) {
-			ex.printStackTrace();
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		}
-//		for (int i = 0; i < dis.length; i++) {
-//			System.out.println(Arrays.toString(dis[i]));
-//		}
-//		int[][] dis = new int[index][3];
-//		for (int i = 0; i < dis.length; i++) {
-//			for (int j = 0; j < dis[0].length; j++) {
-//				dis[i][j] = tempDis[i][j];
-//			}//of for j
-//		}//of for i
-		int[][] fc = new int[300][200];
-		for (int i = 0; i < tempDis.length; i++) {
-			fc[tempDis[i][0]][tempDis[i][1]] = tempDis[i][2];
-		}//of for i
-		return fc;
-	}//of readFile
-	
+
+	/**
+	 * Divid train set and test set.
+	 */
 	public void dividTrainAndTest () {
 		//paraFc is a complete formal context.
-		int[][] paraFc = read("C:/Users/zl/Desktop/ml-1m-sd2-300X200.txt");
+		int[][] paraFc = readFileInt("C:/Users/zl/Desktop/ml-1m-sd2-300X200.txt");
 		//paraArray is a matrix.
 		int[][] paraArray = new int[60000][3];
 		int count = 0;
@@ -411,23 +382,18 @@ public class DataProcessing {
 				count2++;
 			}//of if
 		}//of for i
-		System.out.println("ѵ����");
 		for (int i = 0; i < count1; i++) {
 			System.out.println(Arrays.toString(tempTrain[i]));
 		}
-		System.out.println("���Լ�");
 		for (int i = 0; i < count2; i++) {
 			System.out.println(Arrays.toString(tempTest[i]));
 		}
 	}
-	
+
 	/**
-	 * exchange the String matrix to double matrix.
-	 *
+	 * Exchange the String matrix to double matrix.
 	 * @param paraStringMatrix
-	 *            The String matrix.
 	 * @return
-	 *
 	 */
 	public double[][] exchangeStringToDouble(String[][] paraStringMatrix) {
 		double[][] tempInformation = new double[paraStringMatrix.length][paraStringMatrix[0].length];
@@ -438,13 +404,11 @@ public class DataProcessing {
 		}//of for i
 		return tempInformation;
 	}//of for exchangeStringToInt
-	
+
 	/**
 	 * Find the max and min data.
-	 *
 	 * @param paraRatingMatrix
 	 * @return
-	 *
 	 */
 	public double[] findTheMaxAndMin(double[] paraRatingMatrix) {
 		double max = -100;
@@ -464,11 +428,9 @@ public class DataProcessing {
 	}// of findTheMaxAndMin
 	
 	/**
-	 * normalzie.
-	 *
+	 * Normalzie.
 	 * @param paraRatingMatrix
 	 * @return
-	 *
 	 */
 	public int[][] normalizeByColumn(double[][] paraRatingMatrix) {
 		for (int i = 0; i < paraRatingMatrix[0].length; i++) {
@@ -481,13 +443,12 @@ public class DataProcessing {
 		}//of for i
 		return ratingMatrixInt;
 	}//normalizeByColumn
-	
-	/**********************************************
+
+	/**
 	 * Divide the original rating matrix into training and testing rating matrix.
-	 * 
 	 * @param paraFormalContext
 	 * @param paraRatio
-	 **********************************************
+	 * @return
 	 */
 	public int[][] obtainTrainingAndTestingFormalContext(int[][] paraFormalContext, double paraRatio) {
 		testingFormalContext = new int[paraFormalContext.length][];
@@ -512,12 +473,12 @@ public class DataProcessing {
 		} // End for i
 		return testingFormalContext;
 	}// End function obtainTrainingFormalContext
-	
-	/****************************************
-	 * obtain string result of formal context.
-	 **************************************** 
-	 */
 
+	/**
+	 * Obtain string result of formal context.
+	 * @param paraFormalContext
+	 * @return
+	 */
 	public String stringFormalContext(int[][] paraFormalContext) {
 		String tempFormalContext = "";
 		for (int i = 0; i < paraFormalContext.length; i++) {
@@ -525,12 +486,12 @@ public class DataProcessing {
 		}
 		return tempFormalContext;
 	}// End function
-	
-	/****************************************
-	 * obtain string result of formal context.
-	 **************************************** 
-	 */
 
+	/**
+	 * Obtain string result of formal context.
+	 * @param paraFormalContext
+	 * @return
+	 */
 	public String stringCompressedFormalContext(int[][] paraFormalContext) {
 		String tempFormalContext = "";
 		String formalContext = "";
@@ -544,12 +505,13 @@ public class DataProcessing {
 		} // Of for i
 		return formalContext;
 	}// End function
-	
-	/********************************
-	 * write formal context to file.
-	 ******************************** 
-	 */
 
+	/**
+	 * Write formal context to file.
+	 * @param paraFormalContext
+	 * @param paraWriteURL
+	 * @param paraI
+	 */
 	public void writeToFile(int[][] paraFormalContext, String paraWriteURL, int paraI) {
 		String str1 = paraWriteURL;
 		String tempFormalContext = "";
@@ -563,8 +525,8 @@ public class DataProcessing {
 		default:
 			break;
 		}// Of switch
-			// String tempFormalContext = stringFormalContext(paraFormalContext);
-			// String tempFormalContext = stringCompressedFormalContext(paraFormalContext);
+//		String tempFormalContext = stringFormalContext(paraFormalContext);
+//		String tempFormalContext = stringCompressedFormalContext(paraFormalContext);
 		File myFilePath = new File(str1);
 		try {
 			if (!myFilePath.exists()) {
@@ -578,19 +540,15 @@ public class DataProcessing {
 			e.printStackTrace();
 		} // End try
 	}// End function
-	
+
 	/**
-	 * main.
-	 *
+	 * Entrance of this program.
 	 * @param args
-	 * @return
-	 *
 	 */
     public static void main(String[] args) {
     	DataProcessing d = new DataProcessing();
 //    	d.sampling("C:/Users/zl/Desktop/wzy/ml-1m-ratings.txt", 300, 200);
 //    	d.dividTrainAndTest();
-    	d.readFile("src/data/jester-sd1-300X100-test.txt");
+    	d.readFileDouble("src/data/jester-sd1-300X100-test.txt");
     }//of main
- 
 }
