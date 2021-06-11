@@ -93,14 +93,10 @@ public class RatingMatrix {
 		candidateRepresentatives = new boolean[paraNumUsers];
 		Arrays.fill(candidateRepresentatives, true);
 	}// Of the constructor
-	
+
 	/**
-	 **************
-	 * The second constructor
-	 * 
-	 * @param paraFilename
-	 *            The arff filename.
-	 ************** 
+	 * The second constructor。
+	 * @param paraRatingMatrixFilename
 	 */
 	public RatingMatrix(String paraRatingMatrixFilename){
 		int[][] tempRatingMatrix = dp.readFCFromFile(paraRatingMatrixFilename);
@@ -241,7 +237,7 @@ public class RatingMatrix {
 	 * @param paraTxtFilename
 	 */
 	public RatingMatrix( int paraUsers, int paraItems,String paraTxtFilename){
-		int[][] tempArray = readFile(paraTxtFilename);
+		int[][] tempArray = readFCFromArrayFile(paraTxtFilename, paraUsers, paraItems);
 //		for (int i = 0; i < tempArray.length; i++) {
 //			System.out.println(Arrays.toString(tempArray[i]));
 //		}
@@ -288,14 +284,10 @@ public class RatingMatrix {
 		candidateRepresentatives = new boolean[paraMatrix.length];
 		Arrays.fill(candidateRepresentatives, true);
 	}// Of the constructor
-	
+
 	/**
-	 **************
-	 * The third constructor
-	 * 
-	 * @param paraFilename
-	 *            The arff filename.
-	 ************** 
+	 * The third constructor。
+	 * @param paraMatrix
 	 */
 	public RatingMatrix(double[][] paraMatrix) {
 		// Convert to the boolean matrix.
@@ -452,12 +444,10 @@ public class RatingMatrix {
 	}// of computeRepresentativeAllOrientedConcept
 
 	/**
-	 **************
 	 * Compute representative oriented concept.
-	 * @param paraRepresentative The representative user.
-	 * @param paraItemsThreshold The threshold for common items.
-	 * @param paraUsersThreshold The threshold for common users.
-	 ************** 
+	 * @param paraRepresentative
+	 * @param paraItemsThreshold
+	 * @return
 	 */
 	Concept computeRepresentativeOrientedConcept(int paraRepresentative, int paraItemsThreshold) {
 		// Step 1. Initialize
@@ -570,9 +560,11 @@ public class RatingMatrix {
 
 		return resultConcept;
 	}// Of computeRepresentativeOrientedConcept
-	
+
 	/**
-	 * compute similarity of each user
+	 * Compute similarity of each user
+	 * @param paraUser
+	 * @return
 	 */
 	public double[] computeSimilarityOfEachUser(int paraUser) {
 		double[] similarityOfEachUser = new double[formalContext.length];
@@ -585,9 +577,13 @@ public class RatingMatrix {
 		} // of for i
 		return similarityOfEachUser;
 	}// of computeSimilarityOfEachUser
-	
+
 	/**
-	 * compute mutate oriented concepts
+	 * Compute mutate oriented concepts.
+	 * @param paraUser
+	 * @param paraUserThreshold
+	 * @param paraConcept
+	 * @return
 	 */
 	public Concept computeMutateOrientedConcepts(int paraUser, int paraUserThreshold, Concept paraConcept) {
 		Concept resultConcept = null;
@@ -633,9 +629,13 @@ public class RatingMatrix {
 //		resultConcept = new Concept(userArray, itemArray);
 		return resultConcept;
 	}// of computeMutateOrientedConcepts
-	
+
 	/**
-	 * compute mutate oriented concepts
+	 * compute mutate oriented concepts.
+	 * @param paraUser
+	 * @param paraItemThreshold
+	 * @param paraConcept
+	 * @return
 	 */
 	public Concept mutateOrientedConcepts(int paraUser, int paraItemThreshold, Concept paraConcept) {
 		Concept resultConcept = null;
@@ -664,7 +664,7 @@ public class RatingMatrix {
 			} // of for j
 		} // of for i
 			// add users
-		double maxSim = computeSimilarityOfConcepts(paraConcept);
+//		double maxSim = computeSimilarityOfConcepts(paraConcept);
 		
 		for (int i = 0; i < tempIndexOfUser.length; i++) {
 			tempAvailable[tempIndexOfUser[i]] = true;	
@@ -681,10 +681,10 @@ public class RatingMatrix {
 		resultConcept = new Concept(resultUserArray, resultItemArray);
 		return resultConcept;
 	}//of mutateOrientedConcepts
-	
+
 	/**
-	 * get users
-	 * @param paraUserSet
+	 * Add users.
+	 * @param paraConcpet
 	 * @param paraAvailable
 	 * @return
 	 */
@@ -709,7 +709,7 @@ public class RatingMatrix {
 	}//of addUsers
 	
 	/**
-	 * get users
+	 * Get users
 	 * @param paraUserSet
 	 * @param paraAvailable
 	 * @return
@@ -742,23 +742,20 @@ public class RatingMatrix {
 	public int numUsers(){
 		return formalContext.length;
 	}//Of numUsers
-	
+
 	/**
-	 **************
 	 * Get the number of items.
-	 * @return the number of items.
-	 ************** 
+	 * @return
 	 */
 	public int numItems(){
 		return formalContext[0].length;
 	}//Of numItems
 
 	/**
-	 **************
 	 * Which users have rated the given item set.
-	 * @param paraItemSet The given item set.
-	 * @param paraAvailable Is the respective item available.
-	 ************** 
+	 * @param paraItemSet
+	 * @param paraAvailable
+	 * @return
 	 */
 	int[] getSuperUsers(int[] paraItemSet, boolean[] paraAvailable) {
 		int[] tempUsers = new int[formalContext.length];
@@ -788,13 +785,12 @@ public class RatingMatrix {
 		
 		return resultUsers;
 	}//Of getSuperUsers
-	
+
 	/**
-	 **************
 	 * Which items have been rated by the given user set.
-	 * @param paraUserSet The given user set.
-	 * @param paraAvailable Is the respective item available.
-	 ************** 
+	 * @param paraUserSet
+	 * @param paraUserAvailable
+	 * @return
 	 */
 	int[] getSuperItems(int[] paraUserSet,boolean[] paraUserAvailable) {
 		
@@ -843,13 +839,11 @@ public class RatingMatrix {
 		
 		return itemSet;
 	}//of getSuperItems
-	
+
 	/**
-	 **************
 	 * Which users have rated the given item set.
-	 * @param paraItemSet The given item set.
-	 * @param paraAvailable Is the respective item available.
-	 ************** 
+	 * @param paraItemSet
+	 * @return
 	 */
 	int[] getUsers(int[] paraItemSet) {
 		int[] tempUsers = new int[formalContext.length];
@@ -879,13 +873,11 @@ public class RatingMatrix {
 		
 		return resultUsers;
 	}
-	
+
 	/**
-	 **************
 	 * Which users have rated the given item set.
-	 * @param paraItemSet The given item set.
-	 * @param paraAvailable Is the respective item available.
-	 ************** 
+	 * @param paraItemSet
+	 * @return
 	 */
 	int[] getSuperUsers(int[] paraItemSet) {
 		int[] tempUsers = new int[formalContext.length];
@@ -915,13 +907,11 @@ public class RatingMatrix {
 		
 		return resultUsers;
 	}//of getSuperUsers
-	
+
 	/**
-	 **************
 	 * Which items have been rated by the given user set.
-	 * @param paraUserSet The given user set.
-	 * @param paraAvailable Is the respective item available.
-	 ************** 
+	 * @param paraUserSet
+	 * @return
 	 */
 	int[] getSuperItems(int[] paraUserSet) {
 		int[] tempItems = new int[formalContext[0].length];
@@ -952,14 +942,11 @@ public class RatingMatrix {
 		return resultItems;
 	}//Of getSuperItems
 
-	
-
 	/**
-	 **************
 	 * Compute the number of items rated by each user.
-	 ************** 
+	 * @return
 	 */
-	public int[] getUserFever() {//����getUserFever()����һ��int���͵�����
+	public int[] getUserFever() {
 		int[] tempFever = new int[formalContext.length];
 		for (int i = 0; i < formalContext.length; i++) {
 			for (int j = 0; j < formalContext[0].length; j++) {
@@ -971,11 +958,10 @@ public class RatingMatrix {
 		
 		return tempFever;
 	}//Of getUserFever
-	
+
 	/**
-	 **************
 	 * Compute the number of items rated by each item.
-	 ************** 
+	 * @return
 	 */
 	public int[] getItemFever() {
 		int[] tempFever = new int[formalContext[0].length];
@@ -989,11 +975,10 @@ public class RatingMatrix {
 		
 		return tempFever;
 	}//Of getItemFever
-	
+
 	/**
-	 **************
 	 * toString.
-	 ************** 
+	 * @return
 	 */
 	public String toString() {
 		String resultString = "The rating matrix is:\r\n";
@@ -1035,12 +1020,11 @@ public class RatingMatrix {
 	}// Of conceptSimilarity
 
 	/**
-	 **************
 	 * Recommend to the given user with the given concept.
-	 * @param paraUser The given user.
-	 * @param paraConcept The given concept.
-	 * @param paraThreshold The threshold for recommendation.
-	 ************** 
+	 * @param paraUser
+	 * @param paraConcept
+	 * @param paraThreshold
+	 * @return
 	 */
 	public boolean[] userConceptBasedRecommendation(int paraUser, Concept paraConcept, double paraThreshold) {
 		boolean[] resultRecommendation = new boolean[formalContext[0].length];
@@ -1068,14 +1052,12 @@ public class RatingMatrix {
 		
 		return resultRecommendation;
 	}//Of recommendForUser
-	
+
 	/**
-	 **************
 	 * Recommend to the given user with the given concept.
-	 * @param paraUser The given user.
-	 * @param paraConcept The given concept.
-	 * @param paraThreshold The threshold for recommendation.
-	 ************** 
+	 * @param paraUser
+	 * @param paraConcept
+	 * @return
 	 */
 	public double[] conceptsBasedRatingRecommendation(int paraUser, Concept paraConcept) {
 		double[] resultRecommendation = new double[formalContext[0].length];
@@ -1119,17 +1101,14 @@ public class RatingMatrix {
 			
 			
 		}//Of for i
-		
 		return resultRecommendation;
 	}//Of recommendForUser
-	
+
 	/**
-	 **************
 	 * Recommend to the given user with the given user group.
-	 * @param paraUser The given user.
-	 * @param paraConcept The given concept.
-	 * @param paraThreshold The threshold for recommendation.
-	 ************** 
+	 * @param paraUser
+	 * @param paraUserGroup
+	 * @return
 	 */
 	public double[] groupBasedRatingRecommendation(int paraUser, int[] paraUserGroup) {
 		double[] resultRecommendation = new double[formalContext[0].length];
@@ -1157,11 +1136,15 @@ public class RatingMatrix {
 		
 		return resultRecommendation;
 	}//Of recommendForUser
-	
+
 	/**
-	 * 
+	 * Get rating.
+	 *
+	 * @param paraUserIndex
+	 * @param paraItemIndex
+	 * @return
 	 */
-	public int getRating(int paraUserIndex,int paraItemIndex) {
+	public int getRating(int paraUserIndex, int paraItemIndex) {
 		return ratingMatrix[paraUserIndex][paraItemIndex];
 	}
 	

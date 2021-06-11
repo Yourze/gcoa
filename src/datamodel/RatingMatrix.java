@@ -237,7 +237,7 @@ public class RatingMatrix {
 	 * @param paraTxtFilename
 	 */
 	public RatingMatrix( int paraUsers, int paraItems,String paraTxtFilename){
-		int[][] tempArray = readFile(paraTxtFilename);
+		int[][] tempArray = readFCFromArrayFile(paraTxtFilename, paraUsers, paraItems);
 //		for (int i = 0; i < tempArray.length; i++) {
 //			System.out.println(Arrays.toString(tempArray[i]));
 //		}
@@ -664,7 +664,7 @@ public class RatingMatrix {
 			} // of for j
 		} // of for i
 			// add users
-		double maxSim = computeSimilarityOfConcepts(paraConcept);
+//		double maxSim = computeSimilarityOfConcepts(paraConcept);
 		
 		for (int i = 0; i < tempIndexOfUser.length; i++) {
 			tempAvailable[tempIndexOfUser[i]] = true;	
@@ -677,7 +677,8 @@ public class RatingMatrix {
 			} // of if
 		} // of for i
 		int[] resultItemArray = getSuperItems(paraConcept.users, tempAvailable);
-		int[] resultUserArray = getUsers(resultItemArray);
+		int[] resultUserArray = getUsers(paraConcept.users, tempAvailable);
+//		int[] resultUserArray = getUsers(resultItemArray);
 		resultConcept = new Concept(resultUserArray, resultItemArray);
 		return resultConcept;
 	}//of mutateOrientedConcepts

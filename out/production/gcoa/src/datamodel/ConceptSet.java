@@ -272,7 +272,7 @@ public class ConceptSet {
                         paraItemsThreshold);
                 // Step 2.3 Record the concept.
                 userOrientedConcepts[decendantFever[i]] = tempNewConcept;
-//				System.out.println(Arrays.toString(tempNewConcept.users) + Arrays.toString(tempNewConcept.items));
+				System.out.println(Arrays.toString(tempNewConcept.users) + Arrays.toString(tempNewConcept.items));
                 // Step 2.4 Update the user-concept relationships.
                 int[] tempUsers = tempNewConcept.getUsers();
                 for (int j = 0; j < tempUsers.length; j++) {
@@ -639,8 +639,8 @@ public class ConceptSet {
                         if (count1 == 0) {
                             // record the concept
                             newConceptOfCross[count1] = tempNewConcept;
-//							System.out.println("After cross(0): " + Arrays.toString(newConceptOfCross[count1].users)
-//									+ Arrays.toString(newConceptOfCross[count1].items));
+							System.out.println("After cross(0): " + Arrays.toString(newConceptOfCross[count1].users)
+									+ Arrays.toString(newConceptOfCross[count1].items));
                             count1++;
                         } else {
                             boolean isSame;
@@ -652,8 +652,8 @@ public class ConceptSet {
                                     if (k == count1 - 1) {
                                         // record the new concept
                                         newConceptOfCross[count1] = tempNewConcept;
-//										System.out.println("After cross: " + Arrays.toString(newConceptOfCross[count1].users)
-//												+ Arrays.toString(newConceptOfCross[count1].items));
+										System.out.println("After cross: " + Arrays.toString(newConceptOfCross[count1].users)
+												+ Arrays.toString(newConceptOfCross[count1].items));
                                         count1++;
                                     } // of if
                                 } // of if
@@ -676,8 +676,8 @@ public class ConceptSet {
                     // record the concept
                     newConcept[count2] = tempNewConcept;
 
-//					System.out.println("After mutate(0): " + Arrays.toString(newConcept[count2].users)
-//							+ Arrays.toString(newConcept[count2].items));
+					System.out.println("After mutate(0): " + Arrays.toString(newConcept[count2].users)
+							+ Arrays.toString(newConcept[count2].items));
                     count2++;
                 } else {
                     // is the concept same
@@ -691,8 +691,8 @@ public class ConceptSet {
                             if (k == count2 - 1) {
                                 // record the new concept
                                 newConcept[count2] = tempNewConcept;
-//								System.out.println("After mutate: " + Arrays.toString(newConcept[count2].users)
-//										+ Arrays.toString(newConcept[count2].items));
+								System.out.println("After mutate: " + Arrays.toString(newConcept[count2].users)
+										+ Arrays.toString(newConcept[count2].items));
                                 count2++;
                             } // of if
                         } // of if
@@ -705,9 +705,9 @@ public class ConceptSet {
         } // of for i
 
         // final
-        if (count2 != 0) {
-            recordUsers[paraUser] = true;
-        }//of if
+//        if (count2 != 0) {
+//            recordUsers[paraUser] = true;
+//        }//of if
         //use old concept to recommend
 //		Concept[] userConcepts = new Concept[userConceptCounts[paraUser]];
 //		for (int i = 0; i < userConceptCounts[paraUser]; i++) {
@@ -982,12 +982,12 @@ public class ConceptSet {
         tempSet.generateDeConceptSet(2, 8);
 //		tempSet.showInformation();
 //      long startTime = System.currentTimeMillis();
-//		for (int i = 0; i < tempSet.numUsers; i++) {
-//			System.out.println("for user " + i + " ");
-//			tempSet.GCGAv6(i, 2, 1);
-//		} // of for i
-        int[][] tempRecommendations = tempSet.recommendation(0.5);
-        tempSet.validateRecommendation(tempTestRatingMatrix.formalContext, tempRecommendations);
+		for (int i = 0; i < tempSet.numUsers; i++) {
+			System.out.println("for user " + i + " ");
+			tempSet.GCGAv6(i, 2, 1);
+		} // of for i
+//        int[][] tempRecommendations = tempSet.recommendation(0.5);
+//        tempSet.validateRecommendation(tempTestRatingMatrix.formalContext, tempRecommendations);
 //      long endTime = System.currentTimeMillis();
 //		tempSet.validateRecommendation(tempTestRatingMatrix.formalContext, recommendations);
 //		tempSet.validateRecommendationOfGCGAv6(tempTestRatingMatrix.formalContext, recordUsers, recommendations);
@@ -1151,17 +1151,33 @@ public class ConceptSet {
 //		long endTime2 = System.currentTimeMillis();
 //		System.out.println("Time: " + (endTime2 - startTime2) + "ms");
     }
+    public static void test () {
+        String tempTrainFormalContextURL = "src/data/smalltest.txt";
+        String tempTestFormalContextURL = "src/data/smalltest.txt";
 
+        RatingMatrix tempTrainRatingMatrix = new RatingMatrix(10, 7, tempTrainFormalContextURL);
+        RatingMatrix tempTestRatingMatrix = new RatingMatrix(10, 7, tempTestFormalContextURL);
+
+        ConceptSet tempSet = new ConceptSet(tempTrainRatingMatrix);
+        tempSet.generateDeConceptSet(2, 2);
+        for (int i = 0; i < tempTrainRatingMatrix.formalContext.length; i++) {
+			System.out.println("for user " + i  + ":");
+			tempSet.GCGAv6(i, 2, 1);
+		} // of for i
+    }
     /**
      * Entrance of this program.
      * @param args
      * @throws FileNotFoundException
      */
     public static void main(String args[]) throws FileNotFoundException {
-//		trainAndTest1();
+		trainAndTest1();
 //		trainAndTest2();
 //		trainAndTest3();
-		trainAndTest4();
+//		trainAndTest4();
 //        trainAndTest5();
+//        test();
     }// Of main
+
+
 }// Of ConceptSet
