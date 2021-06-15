@@ -677,7 +677,8 @@ public class RatingMatrix {
 			} // of if
 		} // of for i
 		int[] resultItemArray = getSuperItems(paraConcept.users, tempAvailable);
-		int[] resultUserArray = getUsers(resultItemArray);
+		int[] resultUserArray = getUsers(paraConcept.users, tempAvailable);
+//		int[] resultUserArray = getUsers(resultItemArray);
 		resultConcept = new Concept(resultUserArray, resultItemArray);
 		return resultConcept;
 	}//of mutateOrientedConcepts

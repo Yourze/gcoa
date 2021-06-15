@@ -136,6 +136,7 @@ public class ConceptSet {
 
     /**
      * Compute S2.
+     *
      * @param @return
      * @return
      */
@@ -174,6 +175,7 @@ public class ConceptSet {
 
     /**
      * Sort the user according to the number of items they have rated in descendant order.
+     *
      * @return
      */
     public int[] computeDecendantFever() {
@@ -207,6 +209,7 @@ public class ConceptSet {
 
     /**
      * Find user rated no film.
+     *
      * @return
      */
     public boolean[] findUserHaveNoFilm() {
@@ -228,6 +231,7 @@ public class ConceptSet {
 
     /**
      * Generate all concepts of formal context.
+     *
      * @param paraUsersThreshold
      * @param paraItemsThreshold
      * @return Number of concepts.
@@ -248,6 +252,7 @@ public class ConceptSet {
 
     /**
      * Generate the concept using the user fever in descending order.
+     *
      * @param paraUsersThreshold
      * @param paraItemsThreshold
      * @return Actual number of concepts.
@@ -272,7 +277,7 @@ public class ConceptSet {
                         paraItemsThreshold);
                 // Step 2.3 Record the concept.
                 userOrientedConcepts[decendantFever[i]] = tempNewConcept;
-				System.out.println(Arrays.toString(tempNewConcept.users) + Arrays.toString(tempNewConcept.items));
+//                System.out.println(Arrays.toString(tempNewConcept.users) + Arrays.toString(tempNewConcept.items));
                 // Step 2.4 Update the user-concept relationships.
                 int[] tempUsers = tempNewConcept.getUsers();
                 for (int j = 0; j < tempUsers.length; j++) {
@@ -288,17 +293,14 @@ public class ConceptSet {
             } // Of if
         } // Of for i
         System.out.println("There are " + tempActualConcepts + " concepts.");
-        @SuppressWarnings("unused")
-        int tempCount = 0;
-        for (int i = 0; i < userConceptCounts.length; i++) {
-            tempCount += userConceptCounts[i];
-        } // of for i
+
         return tempActualConcepts;
 
     }// Of generateDeConceptSet
 
     /**
      * replace a user with a more similar user
+     *
      * @param paraUser
      * @param paraConcept
      * @param paraInsteadUser
@@ -333,6 +335,7 @@ public class ConceptSet {
 
     /**
      * Exchange the two concept at the cross site.
+     *
      * @param paraConcept1
      * @param paraConcept2
      * @param paraCrossSite
@@ -418,6 +421,7 @@ public class ConceptSet {
 
     /**
      * Is the given user set include the given user?
+     *
      * @param paraUserSet
      * @param paraUser
      * @return The result.0 menas not have,1 means have one,2 means the given user is duplicate.
@@ -440,6 +444,7 @@ public class ConceptSet {
 
     /**
      * Whether there are duplicate elements in the given user set?
+     *
      * @param paraUserSet
      * @param paraUser
      * @return
@@ -460,6 +465,7 @@ public class ConceptSet {
 
     /**
      * Is the given two concepts same?
+     *
      * @param paraConcept1
      * @param paraConcept2
      * @return
@@ -479,6 +485,7 @@ public class ConceptSet {
 
     /**
      * Find the user get new concepts,and record the new concept.
+     *
      * @param paraUser
      * @param paraLowUserThreshold
      * @param paraItemThreshold
@@ -611,17 +618,55 @@ public class ConceptSet {
 
     /**
      * ACGA
+     *
      * @param paraUser
      * @param paraLowUserThreshold
      * @param paraItemThreshold
      */
     public void GCGAv6(int paraUser, int paraLowUserThreshold, int paraItemThreshold) {
         // Cross
-        Concept[] newConceptOfCross = new Concept[2000];
-        Concept[] newConcept = new Concept[2000];
+        Concept[] newConceptOfCross = new Concept[10000];
+        Concept[] newConcept = new Concept[10000];
         int count1 = 0;
         for (int i = 0; i < userConceptCounts[paraUser] - 1; i++) {
             for (int j = i + 1; j < userConceptCounts[paraUser]; j++) {
+                if (ratingMatrix.computeSimilarityOfConcepts(userOrientedConcepts[userConceptInclusionMatrix[paraUser][i]]) > ratingMatrix.computeSimilarityOfConcepts(userOrientedConcepts[userConceptInclusionMatrix[paraUser][j]])) {
+                    if (count1 == 0) {
+                        newConceptOfCross[count1] = userOrientedConcepts[userConceptInclusionMatrix[paraUser][i]];
+                        count1++;
+                    } else {
+                        boolean isSame;
+                        for (int k = 0; k < count1; k++) {
+                            isSame = isConceptSame(userOrientedConcepts[userConceptInclusionMatrix[paraUser][i]], newConceptOfCross[k]);
+                            if (isSame) {
+                                break;
+                            } else {
+                                if (k == count1 - 1) {
+                                    newConceptOfCross[count1] = userOrientedConcepts[userConceptInclusionMatrix[paraUser][i]];
+                                    count1++;
+                                }
+                            }//of if
+                        }//of for k
+                    }//of if
+                } else {
+                    if (count1 == 0) {
+                        newConceptOfCross[count1] = userOrientedConcepts[userConceptInclusionMatrix[paraUser][i]];
+                        count1++;
+                    } else {
+                        boolean isSame;
+                        for (int k = 0; k < count1; k++) {
+                            isSame = isConceptSame(userOrientedConcepts[userConceptInclusionMatrix[paraUser][i]], newConceptOfCross[k]);
+                            if (isSame) {
+                                break;
+                            } else {
+                                if (k == count1 - 1) {
+                                    newConceptOfCross[count1] = userOrientedConcepts[userConceptInclusionMatrix[paraUser][i]];
+                                    count1++;
+                                }//of if
+                            }//of if
+                        }//of for k
+                    }//of if
+                }//of if
                 // generate new concept by cross
                 Concept tempNewConcept = ratingMatrix.getNewConceptByCrossUsers(
                         userOrientedConcepts[userConceptInclusionMatrix[paraUser][i]],
@@ -629,18 +674,14 @@ public class ConceptSet {
                 // is the new concept effective?
                 if ((tempNewConcept.users.length > 1) && (tempNewConcept.items.length > 0)) {
                     // is the new concept better than the old concept?
-                    if (ratingMatrix.computeSimilarityOfConcepts(tempNewConcept) > ratingMatrix
-                            .computeSimilarityOfConcepts(userOrientedConcepts[userConceptInclusionMatrix[paraUser][i]])
-                            || ratingMatrix.computeSimilarityOfConcepts(tempNewConcept) > ratingMatrix
-                            .computeSimilarityOfConcepts(
-                                    userOrientedConcepts[userConceptInclusionMatrix[paraUser][j]])) {
+                    if (ratingMatrix.computeSimilarityOfConcepts(tempNewConcept) > Math.min(ratingMatrix.computeSimilarityOfConcepts(userOrientedConcepts[userConceptInclusionMatrix[paraUser][i]]), ratingMatrix.computeSimilarityOfConcepts(userOrientedConcepts[userConceptInclusionMatrix[paraUser][j]]))) {
                         // is the concept same as before
                         // true means same,false means not same
                         if (count1 == 0) {
                             // record the concept
                             newConceptOfCross[count1] = tempNewConcept;
-							System.out.println("After cross(0): " + Arrays.toString(newConceptOfCross[count1].users)
-									+ Arrays.toString(newConceptOfCross[count1].items));
+                            System.out.println("After cross(0): " + Arrays.toString(newConceptOfCross[count1].users)
+                                    + Arrays.toString(newConceptOfCross[count1].items));
                             count1++;
                         } else {
                             boolean isSame;
@@ -652,8 +693,8 @@ public class ConceptSet {
                                     if (k == count1 - 1) {
                                         // record the new concept
                                         newConceptOfCross[count1] = tempNewConcept;
-										System.out.println("After cross: " + Arrays.toString(newConceptOfCross[count1].users)
-												+ Arrays.toString(newConceptOfCross[count1].items));
+                                        System.out.println("After cross: " + Arrays.toString(newConceptOfCross[count1].users)
+                                                + Arrays.toString(newConceptOfCross[count1].items));
                                         count1++;
                                     } // of if
                                 } // of if
@@ -676,8 +717,8 @@ public class ConceptSet {
                     // record the concept
                     newConcept[count2] = tempNewConcept;
 
-					System.out.println("After mutate(0): " + Arrays.toString(newConcept[count2].users)
-							+ Arrays.toString(newConcept[count2].items));
+                    System.out.println("After mutate(0): " + Arrays.toString(newConcept[count2].users)
+                            + Arrays.toString(newConcept[count2].items));
                     count2++;
                 } else {
                     // is the concept same
@@ -691,8 +732,8 @@ public class ConceptSet {
                             if (k == count2 - 1) {
                                 // record the new concept
                                 newConcept[count2] = tempNewConcept;
-								System.out.println("After mutate: " + Arrays.toString(newConcept[count2].users)
-										+ Arrays.toString(newConcept[count2].items));
+                                System.out.println("After mutate: " + Arrays.toString(newConcept[count2].users)
+                                        + Arrays.toString(newConcept[count2].items));
                                 count2++;
                             } // of if
                         } // of if
@@ -738,8 +779,131 @@ public class ConceptSet {
     }// of GCGAv6
 
     /**
+     * ACGA
+     *
+     * @param paraUser
+     * @param paraLowUserThreshold
+     * @param paraItemThreshold
+     */
+    public void GCGAv7(int paraUser, int paraLowUserThreshold, int paraItemThreshold) {
+        // Cross
+        Concept[] newConceptOfCross = new Concept[2000];
+        Concept[] newConcept = new Concept[2000];
+        int count1 = 0;
+        for (int i = 0; i < userConceptCounts[paraUser] - 1; i++) {
+            for (int j = i + 1; j < userConceptCounts[paraUser]; j++) {
+                // generate new concept by cross
+                Concept tempNewConcept = ratingMatrix.getNewConceptByCrossUsers(
+                        userOrientedConcepts[userConceptInclusionMatrix[paraUser][i]],
+                        userOrientedConcepts[userConceptInclusionMatrix[paraUser][j]]);
+                // is the new concept effective?
+                if ((tempNewConcept.users.length > 1) && (tempNewConcept.items.length > 0)) {
+                    // is the new concept better than the old concept?
+                    if (ratingMatrix.computeSimilarityOfConcepts(tempNewConcept) > Math.min(ratingMatrix.computeSimilarityOfConcepts(userOrientedConcepts[userConceptInclusionMatrix[paraUser][i]]), ratingMatrix.computeSimilarityOfConcepts(userOrientedConcepts[userConceptInclusionMatrix[paraUser][j]]))) {
+                        // is the concept same as before
+                        // true means same,false means not same
+                        boolean isSame;
+                        for (int k = 0; k < userConceptCounts[paraUser]; k++) {
+                            isSame = isConceptSame(tempNewConcept, userOrientedConcepts[userConceptInclusionMatrix[paraUser][k]]);
+                            if (isSame) {
+                                break;
+                            } else {
+                                if (k == userConceptCounts[paraUser] - 1) {
+                                    // record the new concept
+                                    newConceptOfCross[count1] = tempNewConcept;
+                                    System.out.println("After cross: " + Arrays.toString(newConceptOfCross[count1].users)
+                                            + Arrays.toString(newConceptOfCross[count1].items));
+                                    count1++;
+                                } // of if
+                            } // of if
+                        } // of for k
+
+                    } // of if
+                } // of if
+            } // of for j
+        } // of for i
+
+        // mutate
+        int count2 = 0;
+        for (int i = 0; i < count1; i++) {
+            if (newConceptOfCross[i].users.length <= paraLowUserThreshold) {
+
+                // generate a concept by mutate
+                Concept tempNewConcept = ratingMatrix.mutateOrientedConcepts(paraUser, paraItemThreshold,
+                        newConceptOfCross[i]);
+
+                    // is the concept same
+                    // true means same,false means not same
+                    boolean isSame;
+                    for (int k = 0; k < userConceptCounts[paraUser]; k++) {
+                        isSame = isConceptSame(tempNewConcept, newConcept[k]);
+                        if (isSame) {
+                            break;
+                        } else {
+                            if (k == userConceptCounts[paraUser] - 1) {
+                                // record the new concept
+                                userOrientedConcepts[tempActualConcepts] = tempNewConcept;
+                                for (int j = 0; j < tempNewConcept.users.length; j++) {
+                                    userConceptInclusionMatrix[tempNewConcept.users[j]][userConceptCounts[tempNewConcept.users[j]]] = tempActualConcepts;
+                                    userConceptCounts[tempNewConcept.users[j]]++;
+                                }
+                                tempActualConcepts++;
+                                System.out.println("After mutate: " + Arrays.toString(newConcept[count2].users)
+                                        + Arrays.toString(newConcept[count2].items));
+                                count2++;
+                            } // of if
+                        } // of if
+                    } // of for k
+
+            } else {
+                userOrientedConcepts[tempActualConcepts] = newConceptOfCross[i];
+                for (int j = 0; j < newConceptOfCross[i].users.length; j++) {
+                    userConceptInclusionMatrix[newConceptOfCross[i].users[j]][userConceptCounts[newConceptOfCross[i].users[j]]] = tempActualConcepts;
+                    userConceptCounts[newConceptOfCross[i].users[j]]++;
+                }
+                tempActualConcepts++;
+                newConcept[count2] = newConceptOfCross[i];
+                count2++;
+            }//of if
+        } // of for i
+
+        // final
+//        if (count2 != 0) {
+//            recordUsers[paraUser] = true;
+//        }//of if
+        //use old concept to recommend
+//		Concept[] userConcepts = new Concept[userConceptCounts[paraUser]];
+//		for (int i = 0; i < userConceptCounts[paraUser]; i++) {
+//			userConcepts[i] = userOrientedConcepts[userConceptInclusionMatrix[paraUser][i]];
+//		}//of for i
+//		int[] tempRecommendation;
+//		tempRecommendation = recommendationTest(paraUser,0.5,userConcepts);
+//		for (int j = 0; j < tempRecommendation.length; j++) {
+//			recommendations[paraUser][j] = tempRecommendation[j];
+//		} // of for j
+        //use new concept to recommend
+//        if (count2 != 0) {
+//            Concept[] finalConcept = new Concept[count2];
+//            for (int i = 0; i < finalConcept.length; i++) {
+//                finalConcept[i] = newConcept[i];
+//            }//of for i
+//            int[][] tempRecommendations;
+//            tempRecommendations = recommendationToAllUsers(0.5, finalConcept);
+//            for (int i = 0; i < tempRecommendations.length; i++) {
+//                for (int j = 0; j < tempRecommendations[0].length; j++) {
+////					if (recommendations[i][j] == 0) {
+//                    recommendations[i][j] += tempRecommendations[i][j];
+////					}//of if
+//                }//of for j
+//            }//of for i
+//        }//of if
+
+    }// of GCGAv6
+
+    /**
      * Validate the recommendation while this rating matrix serves as the test set.
      * Record the contribution of each concept.
+     *
      * @param paraTestMatrix
      * @param paraRecordUsers
      * @param paraRecommendations The recommendation in matrix, storing recommended concept index
@@ -794,6 +958,7 @@ public class ConceptSet {
 
     /**
      * Concept set based recommendation.
+     *
      * @param paraThreshold
      * @return
      */
@@ -817,6 +982,7 @@ public class ConceptSet {
     /**
      * Validate the recommendation while this rating matrix serves as the test set.
      * Record the contribution of each concept.
+     *
      * @param paraTestMatrix
      * @param paraRecommendations The recommendation in matrix, storing recommended concept index
      *                            above -1 indicates recommend, -1 indicates not recommend.
@@ -871,6 +1037,7 @@ public class ConceptSet {
     /**
      * Validate the recommendation while this rating matrix serves as the test set.
      * Record the contribution of each concept.
+     *
      * @param paraTestMatrix
      * @param paraRecommendations The recommendation in matrix, storing recommended concept index
      *                            above -1 indicates recommend, -1 indicates not recommend.
@@ -909,6 +1076,7 @@ public class ConceptSet {
 
     /**
      * Recommendation test.
+     *
      * @param paraThreshold
      * @param paraConceptsSet
      * @return
@@ -931,6 +1099,7 @@ public class ConceptSet {
 
     /**
      * Recommendation test to all users.
+     *
      * @param paraThreshold
      * @param paraConceptsSet
      * @return
@@ -979,17 +1148,21 @@ public class ConceptSet {
         RatingMatrix tempTestRatingMatrix = new RatingMatrix("src/data/testing.arff", 943, 1682);
 
         ConceptSet tempSet = new ConceptSet(tempTrainRatingMatrix);
-        tempSet.generateDeConceptSet(2, 8);
+        tempSet.generateDeConceptSet(2, 2);
 //		tempSet.showInformation();
 //      long startTime = System.currentTimeMillis();
-		for (int i = 0; i < tempSet.numUsers; i++) {
-			System.out.println("for user " + i + " ");
-			tempSet.GCGAv6(i, 2, 1);
-		} // of for i
-//        int[][] tempRecommendations = tempSet.recommendation(0.5);
-//        tempSet.validateRecommendation(tempTestRatingMatrix.formalContext, tempRecommendations);
+//        for (int i = 0; i < tempSet.numUsers; i++) {
+//            System.out.println("for user " + i + " ");
+//            tempSet.GCGAv6(i, 2, 1);
+//        } // of for i
+        for (int i = 0; i < tempSet.numUsers; i++) {
+            System.out.println("for user " + i + " ");
+            tempSet.GCGAv7(i, 2, 1);
+        } // of for i
+        int[][] tempRecommendations = tempSet.recommendation(0.5);
+        tempSet.validateRecommendation(tempTestRatingMatrix.formalContext, tempRecommendations);
 //      long endTime = System.currentTimeMillis();
-//		tempSet.validateRecommendation(tempTestRatingMatrix.formalContext, recommendations);
+        tempSet.validateRecommendation(tempTestRatingMatrix.formalContext, recommendations);
 //		tempSet.validateRecommendationOfGCGAv6(tempTestRatingMatrix.formalContext, recordUsers, recommendations);
 //      System.out.println("Time: " + (endTime - startTime) + "ms");
     }// Of trainAndTest
@@ -1094,9 +1267,9 @@ public class ConceptSet {
         long startTime1 = System.currentTimeMillis();
         tempSet.generateDeConceptSet(2, 2);
 //		System.out.println("for old concepts");
-		int[][] tempRecommendation = tempSet.recommendation(0.5);
-		tempSet.validateRecommendation(tempTestRatingMatrix.formalContext, tempRecommendation);
-		long endTime1 = System.currentTimeMillis();
+        int[][] tempRecommendation = tempSet.recommendation(0.5);
+        tempSet.validateRecommendation(tempTestRatingMatrix.formalContext, tempRecommendation);
+        long endTime1 = System.currentTimeMillis();
 //		System.out.println("Time: " + (endTime1 - startTime1) + "ms");
 //		
         long startTime2 = System.currentTimeMillis();
@@ -1151,7 +1324,8 @@ public class ConceptSet {
 //		long endTime2 = System.currentTimeMillis();
 //		System.out.println("Time: " + (endTime2 - startTime2) + "ms");
     }
-    public static void test () {
+
+    public static void test() {
         String tempTrainFormalContextURL = "src/data/smalltest.txt";
         String tempTestFormalContextURL = "src/data/smalltest.txt";
 
@@ -1161,17 +1335,19 @@ public class ConceptSet {
         ConceptSet tempSet = new ConceptSet(tempTrainRatingMatrix);
         tempSet.generateDeConceptSet(2, 2);
         for (int i = 0; i < tempTrainRatingMatrix.formalContext.length; i++) {
-			System.out.println("for user " + i  + ":");
-			tempSet.GCGAv6(i, 2, 1);
-		} // of for i
+            System.out.println("for user " + i + ":");
+            tempSet.GCGAv6(i, 2, 1);
+        } // of for i
     }
+
     /**
      * Entrance of this program.
+     *
      * @param args
      * @throws FileNotFoundException
      */
     public static void main(String args[]) throws FileNotFoundException {
-		trainAndTest1();
+        trainAndTest1();
 //		trainAndTest2();
 //		trainAndTest3();
 //		trainAndTest4();
