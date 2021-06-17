@@ -616,7 +616,7 @@ public class RatingMatrix {
 			tempUserAvailable[tempIndexOfUser[i]] = true;
 			int[] userArray = getUsers(paraConcept.users, tempUserAvailable);
 			int[] itemArray = getSuperItems(userArray);
-			if (itemArray.length < 0 ) {//���������������ټ�����ӣ������ǰ�ĸ�����Ϊ���յĸ���
+			if (itemArray.length < 0 ) {
 				resultConcept = new Concept(userArray, itemArray);
 			}//of if
 		}//of for i
@@ -1251,6 +1251,11 @@ public class RatingMatrix {
 	public int[] getCrossSet(int[] paraSet1,int[] paraSet2) {
 		int[] tempNewSet = new int[paraSet1.length < paraSet2.length ? paraSet1.length
 				: paraSet2.length];
+//		System.out.println("paraSet1.length: " + paraSet1.length);
+//		System.out.println("paraSet2.length: " + paraSet2.length);
+//		System.out.println(Arrays.toString(paraSet1));
+//		System.out.println(Arrays.toString(paraSet2));
+//		System.out.println("tempNewSet.length: " + tempNewSet.length);
 		int count = 0;
 		for (int i = 0; i < paraSet1.length; i++) {
 			for (int j = 0; j < paraSet2.length; j++) {

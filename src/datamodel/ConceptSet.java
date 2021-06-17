@@ -22,7 +22,7 @@ public class ConceptSet {
     int tempActualConcepts = 0;
     int c = 943;
     int numNewConcept;
-
+    static int num;
 
     /**
      * The minimal number of relevant concepts for each users.
@@ -70,7 +70,7 @@ public class ConceptSet {
      * How many concepts are relevant to this user.
      */
     int[] userConceptCounts;
-
+    int[] tempConceptCounts;
     /**
      * User Sorted(Ascendant)
      */
@@ -128,6 +128,7 @@ public class ConceptSet {
         similarityOfEachUser = new double[numUsers];
         userConceptInclusionMatrix = new int[numUsers][USER_MAXIMAL_RELEVANT_CONCEPTS];
         userConceptCounts = new int[numUsers];
+        tempConceptCounts = new int[numUsers];
         SimpleTools.matrixFill(userConceptInclusionMatrix, -1);
         information = new double[24983][100];
         informationAfterStan = new double[24983][100];
@@ -296,7 +297,9 @@ public class ConceptSet {
             } // Of if
         } // Of for i
         System.out.println("There are " + tempActualConcepts + " concepts.");
-
+        for (int i = 0; i < userConceptCounts.length; i++) {
+            tempConceptCounts[i] = userConceptCounts[i];
+        }
         return tempActualConcepts;
 
     }// Of generateDeConceptSet
@@ -747,7 +750,6 @@ public class ConceptSet {
                 count2++;
             }//of if
         } // of for i
-
         // final
 //        if (count2 != 0) {
 //            recordUsers[paraUser] = true;
@@ -792,10 +794,12 @@ public class ConceptSet {
         // Cross
         Concept[] newConceptOfCross = new Concept[600];
         int count1 = 0;
-        int num = userConceptCounts[paraUser];
-        for (int i = 0; i < num - 1; i++) {
-            for (int j = i + 1; j < num; j++) {
+        for (int i = 0; i < tempConceptCounts[paraUser] - 1; i++) {
+            for (int j = i + 1; j < tempConceptCounts[paraUser]; j++) {
                 // generate new concept by cross
+//                System.out.println("user: " + paraUser);
+//                System.out.println("userOrientedConcepts " + userConceptInclusionMatrix[paraUser][i] + Arrays.toString(userOrientedConcepts[userConceptInclusionMatrix[paraUser][i]].users));
+//                System.out.println("userOrientedConcepts " + userConceptInclusionMatrix[paraUser][j] + Arrays.toString(userOrientedConcepts[userConceptInclusionMatrix[paraUser][j]].users));
                 Concept tempNewConcept = ratingMatrix.getNewConceptByCrossUsers(
                         userOrientedConcepts[userConceptInclusionMatrix[paraUser][i]],
                         userOrientedConcepts[userConceptInclusionMatrix[paraUser][j]]);
@@ -1126,19 +1130,16 @@ public class ConceptSet {
 
         ConceptSet tempSet = new ConceptSet(tempTrainRatingMatrix);
         tempSet.generateDeConceptSet(2, 5);
-//        System.out.println("***");
-//        System.out.println(tempSet.userConceptCounts[12]);
-//        System.out.println("***");
 //		tempSet.showInformation();
 //      long startTime = System.currentTimeMillis();
 //        for (int i = 0; i < tempSet.numUsers; i++) {
 //            System.out.println("for user " + i + " ");
 //            tempSet.GCGAv6(i, 2, 1);
 //        } // of for i
-//        tempSet.GCGAv7(12, 2, 1);
-        for (int i = 0; i < tempSet.numUsers; i++) {
+//        tempSet.GCGAv7(275, 2, 1);
+        for (int i = 25; i < tempSet.numUsers; i++) {
             System.out.println("for user " + i + " ");
-            tempSet.GCGAv7(i, 2, 1);
+            tempSet.GCGAv7(i, 5, 1);
         } // of for i
         int[][] tempRecommendations = tempSet.recommendation(0.5);
         tempSet.validateRecommendation(tempTestRatingMatrix.formalContext, tempRecommendations);
